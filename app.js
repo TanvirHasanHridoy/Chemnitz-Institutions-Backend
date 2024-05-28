@@ -1,24 +1,21 @@
-const express = require("express");
-const axios = require("axios");
-const mongoose = require("mongoose");
+import express from "express";
+import axios from "axios";
+import mongoose from "mongoose";
 
 const app = express();
-const port = 3000;
+const PORT = 3000;
 
 // MongoDB connection string
 const mongoUri = "mongodb://localhost:27017/Chemnitz-Institution__";
 
 // Connect to MongoDB
-mongoose.connect(mongoUri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", () => {
-  console.log("Connected to MongoDB");
-});
+mongoose
+  .connect(mongoUri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.log(err));
 
 // Schema for Schulen
 const schulenSchema = new mongoose.Schema({
@@ -63,11 +60,6 @@ app.get("/fetch-data", async (req, res) => {
     // Fetch data from the API
     const response = await axios.get(apiUrl);
 
-    console.log("########### The basic datas are as follows:");
-    // console.log(response.data);
-    console.log(response.data.features[0]);
-    // console.log("x cord is available :" + response.geometry.coordinates[0]);
-    // console.log(
     //   "Obj id is is available :" + response.features.properties.OBJECTID
     // );
     // Process the data
@@ -122,6 +114,15 @@ app.get("/fetch-data", async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+app.use(express.json());
+app.get("/", async (req, res) => {
+  try {
+    res.status(200).json("Chemnitz Institutions");
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
+
+app.listen(PORT, () =>
+  console.log(`Server is running on http://localhost:${PORT}`)
+);
