@@ -51,16 +51,31 @@ router.get("/schulen", async (req, res) => {
     //   res.send("No data to insert");
     // }
 
-    for (const item of processedData) {
-      const exists = await Schulen.findOne({
-        "properties.OBJECTID": item.properties.OBJECTID,
-      });
-      if (!exists) {
-        await Schulen.create(item);
-      }
-    }
+    // for (const item of processedData) {
+    //   const exists = await Schulen.findOne({
+    //     "properties.OBJECTID": item.properties.OBJECTID,
+    //   });
+    //   if (!exists) {
+    //     await Schulen.create(item);
+    //   }
+    // }
+    // res.status(200).json("Data processed successfully");
 
-    res.status(200).json("Data processed successfully");
+    // deleting all the documents from the collection
+    await Schulen.deleteMany({});
+    console.log("All data deleted");
+
+    // Adding datas/documents to the collection
+
+    if (processedData.length > 0) {
+      await Schulen.insertMany(processedData);
+      res.status(200).json({
+        message: processedData.length + " entry inserted successfully",
+        data: processedData,
+      });
+    } else {
+      res.status(500).json("No data to insert");
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -102,24 +117,20 @@ router.get("/Jugendberufshilfen", async (req, res) => {
       },
     }));
 
-    // // Insert data into MongoDB
-    // if (processedData.length > 0) {
-    //   await Schulen.insertMany(processedData);
-    //   res.send("Data inserted successfully");
-    // } else {
-    //   res.send("No data to insert");
-    // }
+    await Jugendberufshilfen.deleteMany({});
+    console.log("All data deleted");
 
-    for (const item of processedData) {
-      const exists = await Jugendberufshilfen.findOne({
-        "properties.OBJECTID": item.properties.OBJECTID,
+    // Adding datas/documents to the collection
+
+    if (processedData.length > 0) {
+      await Jugendberufshilfen.insertMany(processedData);
+      res.status(200).json({
+        message: processedData.length + " entry inserted successfully",
+        data: processedData,
       });
-      if (!exists) {
-        await Jugendberufshilfen.create(item);
-      }
+    } else {
+      res.status(500).json("No data to insert");
     }
-
-    res.status(200).json("Data processed successfully for Jugendberufshilfen");
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -161,24 +172,21 @@ router.get("/Schulsozialarbeit", async (req, res) => {
       },
     }));
 
-    // // Insert data into MongoDB
-    // if (processedData.length > 0) {
-    //   await Schulen.insertMany(processedData);
-    //   res.send("Data inserted successfully");
-    // } else {
-    //   res.send("No data to insert");
-    // }
+    // deleting all the documents from the collection
+    await Schulsozialarbeit.deleteMany({});
+    console.log("All data deleted");
 
-    for (const item of processedData) {
-      const exists = await Schulsozialarbeit.findOne({
-        "properties.OBJECTID": item.properties.OBJECTID,
+    // Adding datas/documents to the collection
+
+    if (processedData.length > 0) {
+      await Schulsozialarbeit.insertMany(processedData);
+      res.status(200).json({
+        message: processedData.length + " entry inserted successfully",
+        data: processedData,
       });
-      if (!exists) {
-        await Schulsozialarbeit.create(item);
-      }
+    } else {
+      res.status(500).json("No data to insert");
     }
-
-    res.status(200).json("Data processed successfully for Schulsozialarbeit");
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -227,26 +235,21 @@ router.get("/Kindertageseinrichtungen", async (req, res) => {
       },
     }));
 
-    // // Insert data into MongoDB
-    // if (processedData.length > 0) {
-    //   await Schulen.insertMany(processedData);
-    //   res.send("Data inserted successfully");
-    // } else {
-    //   res.send("No data to insert");
-    // }
+    // deleting all the documents from the collection
+    await Kindertageseinrichtungen.deleteMany({});
+    console.log("All data deleted");
 
-    for (const item of processedData) {
-      const exists = await Kindertageseinrichtungen.findOne({
-        "properties.OBJECTID": item.properties.OBJECTID,
+    // Adding datas/documents to the collection
+
+    if (processedData.length > 0) {
+      await Kindertageseinrichtungen.insertMany(processedData);
+      res.status(200).json({
+        message: processedData.length + " entry inserted successfully",
+        data: processedData,
       });
-      if (!exists) {
-        await Kindertageseinrichtungen.create(item);
-      }
+    } else {
+      res.status(500).json("No data to insert");
     }
-
-    res
-      .status(200)
-      .json("Data processed successfully for Kindertageseinrichtungen");
   } catch (error) {
     console.error(error);
     res.status(500).json({
