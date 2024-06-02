@@ -1,17 +1,21 @@
 import express from "express";
 import mongoose from "mongoose";
 import updateRoute from "./routes/updateRoute.js";
+
+import dotenv from "dotenv";
 import schulens from "./routes/schulen.js";
 import jugendberufshilfens from "./routes/jugendberufshilfen.js";
 import kindertageseinrichtungens from "./routes/kindertageseinrichtungen.js";
 import schulsozialarbeits from "./routes/schulsozialarbeit.js";
 import cors from "cors";
+
 const app = express();
-const PORT = 3000;
+
+dotenv.config();
+const PORT = process.env.PORT;
 
 // MongoDB connection string
-const mongoUri = "mongodb://localhost:27017/Chemnitz-Institution__";
-
+const mongoUri = process.env.MONGOURI;
 // Connect to MongoDB
 mongoose
   .connect(mongoUri, {
