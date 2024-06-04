@@ -1,7 +1,3 @@
-// Schulsozialarbeit;
-// schulsozialarbeit;
-// Schulsozialarbeits;
-
 import express from "express";
 import Schulsozialarbeit from "../models/Schulsozialarbeit.js";
 

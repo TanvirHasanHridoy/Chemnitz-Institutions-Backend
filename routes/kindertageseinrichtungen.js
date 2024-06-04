@@ -1,7 +1,3 @@
-// Kindertageseinrichtungen;
-// kindertageseinrichtungens;
-// kindertageseinrichtungen;
-
 import express from "express";
 import Kindertageseinrichtungen from "../models/Kindertageseinrichtungen.js";
 
