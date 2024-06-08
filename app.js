@@ -7,6 +7,7 @@ import schulens from "./routes/schulen.js";
 import jugendberufshilfens from "./routes/jugendberufshilfen.js";
 import kindertageseinrichtungens from "./routes/kindertageseinrichtungen.js";
 import schulsozialarbeits from "./routes/schulsozialarbeit.js";
+import user from "./routes/user.js";
 import all from "./routes/all.js";
 import cors from "cors";
 
@@ -49,6 +50,8 @@ app.use("/jugendberufshilfens", jugendberufshilfens);
 app.use("/kindertageseinrichtungens", kindertageseinrichtungens);
 app.use("/schulsozialarbeits", schulsozialarbeits);
 app.use("/all", all);
+
+app.use("/user", user);
 
 app.listen(PORT, () =>
   console.log(`Server is running on http://localhost:${PORT}`)
