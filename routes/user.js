@@ -64,6 +64,7 @@ router.post("/login", async (req, res) => {
     console.log("Token:", token);
     res.status(200).json({
       message: "Login was successful!",
+      id: user._id,
       token,
     });
   } catch (err) {
@@ -96,7 +97,7 @@ const auth = (req, res, next) => {
 // Protected Route
 router.get("/protected", auth, (req, res) => {
   console.log("values");
-  console.log(req.user);
+  //   console.log(req.user);
   res.send("This is a protected route");
 });
 
@@ -106,8 +107,8 @@ router.put("/updateuser/:id", auth, async (req, res) => {
   const { name, email, password, address, lat, lan } = req.body;
   try {
     // Ensure the user ID in the token matches the requested user ID
-    // console.log(req.params.id, req.user.id);
-    if (req.params.id !== req.user.id) {
+    console.log(req.params.id, req.user);
+    if (req.params.id !== req.user._id) {
       return res.status(403).json({ msg: "Unauthorized to update this user" });
     }
 
@@ -140,12 +141,16 @@ router.put("/updateuser/:id", auth, async (req, res) => {
 // DELETE USER
 router.delete("/deleteuser/:id", auth, async (req, res) => {
   try {
+    // console.log("Inside delete user");
     const user = await User.findById(req.params.id);
     if (!user) {
       return res.status(404).json({ msg: "User not found" });
     }
-
-    await user.remove();
+    if (req.params.id !== req.user._id) {
+      return res.status(403).json({ msg: "Unauthorized to delete this user" });
+    }
+    // console.log(user);
+    await User.deleteOne({ _id: req.params.id });
 
     res.status(200).json({
       message: "User deleted successfully",
