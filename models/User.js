@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 const UserSchema = new mongoose.Schema(
   {
@@ -54,8 +55,18 @@ const UserSchema = new mongoose.Schema(
   }
 );
 
+UserSchema.pre("save", async function (next) {
+  if (!this.isModified("PASSWORD")) {
+    return next();
+  }
+  const salt = await bcrypt.genSalt(10);
+  this.PASSWORD = await bcrypt.hash(this.PASSWORD, salt);
+  // console.log(this.PASSWORD);
+  next();
+});
+
 UserSchema.methods.comparePassword = function (candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password);
+  return bcrypt.compare(candidatePassword, this.PASSWORD);
 };
 
 export default mongoose.model("User", UserSchema);
