@@ -1,98 +1,11 @@
 import express from "express";
 import User from "../models/User.js";
-import jwt from "jsonwebtoken";
-import generateToken from "../utils/jwt_generator.js";
+import { auth } from "./auth.js";
 
 const router = express.Router();
 // @route   POST api/users
 // @desc    Register a user
 // @access  Public
-
-// CREATE USER
-router.post("/createuser", async (req, res) => {
-  const { name, email, password, address, lat, lan } = req.body;
-  //   console.log(name, email, password, address, lat, lan);
-  // Simple validation
-  if (!name || !email || !password || !address || !lat || !lan) {
-    return res.status(400).json({ msg: "Please enter all fields" });
-  }
-
-  try {
-    // Check for existing user
-    let user = await User.findOne({ EMAIL: email });
-
-    if (user) {
-      return res.status(400).json({ msg: "User already exists" });
-    }
-
-    user = new User({
-      NAME: name,
-      EMAIL: email,
-      PASSWORD: password,
-      HOME: {
-        address,
-        lat,
-        lan,
-      },
-    });
-    console.log("Before save:", user.PASSWORD); // Add this line
-    await user.save();
-    console.log("After save:", user.PASSWORD); // Add this line
-
-    res.status(201).json({
-      message: "Registration was successful!",
-    });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server error");
-  }
-});
-
-// LOGIN USER
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const user = await User.findOne({ EMAIL: email });
-    if (!user) {
-      return res.status(400).send("Invalid username");
-    }
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      return res.status(400).send("Invalid password");
-    }
-    const token = generateToken(user._id);
-    console.log("Token:", token);
-    res.status(200).json({
-      message: "Login was successful!",
-      id: user._id,
-      token,
-    });
-  } catch (err) {
-    console.error(err.message); // Add this line
-    res.status(500).send("Server error");
-  }
-});
-
-// Middleware to authenticate JWT
-const auth = (req, res, next) => {
-  const authHeader = req.header("Authorization");
-  //   console.log("The authHeader is:", authHeader);
-
-  if (!authHeader) {
-    return res.status(401).send("No token, authorization denied");
-  }
-  const token = authHeader.split(" ")[1];
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // console.log("deoecoded:", decoded);
-    req.user = decoded;
-    next();
-  } catch (err) {
-    console.log("The error is here:");
-    console.log(err);
-    res.status(401).send("Token is not valid");
-  }
-};
 
 // Protected Route
 router.get("/protected", auth, (req, res) => {

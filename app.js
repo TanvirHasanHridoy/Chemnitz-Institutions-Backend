@@ -9,7 +9,9 @@ import kindertageseinrichtungens from "./routes/kindertageseinrichtungen.js";
 import schulsozialarbeits from "./routes/schulsozialarbeit.js";
 import user from "./routes/user.js";
 import all from "./routes/all.js";
+import auth from "./routes/auth.js";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -44,14 +46,15 @@ app.use(
     credentials: true, // Allow cookies to be sent
   })
 );
+app.use(cookieParser());
 app.use("/update", updateRoute);
 app.use("/schulens", schulens);
 app.use("/jugendberufshilfens", jugendberufshilfens);
 app.use("/kindertageseinrichtungens", kindertageseinrichtungens);
 app.use("/schulsozialarbeits", schulsozialarbeits);
 app.use("/all", all);
-
 app.use("/user", user);
+app.use("/auth", auth);
 
 app.listen(PORT, () =>
   console.log(`Server is running on http://localhost:${PORT}`)
