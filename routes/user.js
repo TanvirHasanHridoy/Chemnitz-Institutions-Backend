@@ -14,6 +14,27 @@ router.get("/protected", auth, (req, res) => {
   res.send("This is a protected route");
 });
 
+// GET USER
+router.get("/getuser/:id", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (req.params.id !== req.user._id) {
+      return res
+        .status(403)
+        .json({ message: "Unauthorized to view this user" });
+    }
+    res.status(200).json({
+      user,
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
 // UPDATE USER
 // UPDATE USER
 router.put("/updateuser/:id", auth, async (req, res) => {
@@ -32,6 +53,17 @@ router.put("/updateuser/:id", auth, async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+
+    let user1 = await User.findOne({ EMAIL: email });
+    if (user1) {
+      return res
+        .status(400)
+        .json({ message: "Email already exists or can't use this email" });
+    }
+
+    // if (user.EMAIL === email) {
+    //   return res.status(400).json({ message: "Please add a different email" });
+    // }
 
     // Update user fields
     if (name) user.NAME = name;
@@ -52,8 +84,9 @@ router.put("/updateuser/:id", auth, async (req, res) => {
     });
   } catch (err) {
     console.log("error occured in update user");
-    console.log(err);
+    // console.log(err);
     console.error(err.message);
+    console.log("end of error");
     res.status(500).json({
       message: "Error occured at server side",
     });
