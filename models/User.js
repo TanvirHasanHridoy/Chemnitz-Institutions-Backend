@@ -9,7 +9,7 @@ const UserSchema = new mongoose.Schema(
     },
     EMAIL: {
       type: String,
-      unique: true,
+      unique: [true, "Email already exists"],
       required: true,
     },
     PASSWORD: {
@@ -36,7 +36,7 @@ const UserSchema = new mongoose.Schema(
     FAVORITE: {
       address: {
         type: String,
-        default: undefined,
+        default: null,
       },
       lat: {
         type: Number,

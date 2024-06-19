@@ -3,9 +3,11 @@ import Jugendberufshilfen from "../models/Jugendberufshilfen.js";
 import Kindertageseinrichtungen from "../models/Kindertageseinrichtungen.js";
 import Schulen from "../models/Schulen.js";
 import Schulsozialarbeit from "../models/Schulsozialarbeit.js";
+import mongoose from "mongoose";
 
 const router = express.Router();
 
+// GET ALL DATA
 router.get("/", async (req, res) => {
   try {
     const jugendberufshilfens = await Jugendberufshilfen.find();
@@ -62,6 +64,39 @@ router.get("/", async (req, res) => {
     res.status(200).send(combinedData);
   } catch (err) {
     res.status(500).send(err);
+  }
+});
+
+// GET DATA BY ID
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: "Invalid ID format." });
+  }
+  try {
+    const collections = [
+      Jugendberufshilfen,
+      Kindertageseinrichtungen,
+      Schulen,
+      Schulsozialarbeit,
+    ];
+    let foundDoc = null;
+
+    for (const collection of collections) {
+      foundDoc = await collection.findById(id);
+      if (foundDoc) {
+        break;
+      }
+    }
+
+    if (foundDoc) {
+      res.status(200).json(foundDoc);
+    } else {
+      res.status(404).send("Document not found");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
   }
 });
 

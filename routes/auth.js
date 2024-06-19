@@ -10,6 +10,16 @@ router.post("/createuser", async (req, res) => {
   const { name, email, password, address, lat, lan } = req.body;
   //   console.log(name, email, password, address, lat, lan);
   // Simple validation
+  console.log(
+    "Creating user with the following details:",
+    name,
+    email,
+    password,
+    address,
+    lat,
+    lan
+  );
+
   if (!name || !email || !password || !address || !lat || !lan) {
     return res.status(400).json({ message: "Please enter all fields" });
   }
@@ -60,7 +70,12 @@ router.post("/login", async (req, res) => {
     }
     const token = generateToken(user._id);
     console.log("Token:", token);
-    res.cookie("token", token, { httpOnly: true, secure: false });
+    res.cookie("token", token, {
+      httpOnly: false,
+      secure: false,
+      // Lifetime of the cookie in milliseconds, currently set to 60 minutes
+      maxAge: 1000 * 60 * 60,
+    });
     res.status(200).json({
       message: "Login was successful!",
       id: user._id,

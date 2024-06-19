@@ -21,24 +21,29 @@ router.put("/updateuser/:id", auth, async (req, res) => {
   try {
     // Ensure the user ID in the token matches the requested user ID
     console.log(req.params.id, req.user);
+    console.log("trying to update user");
     if (req.params.id !== req.user._id) {
-      return res.status(403).json({ msg: "Unauthorized to update this user" });
+      return res
+        .status(403)
+        .json({ message: "Unauthorized to update this user" });
     }
 
     let user = await User.findById(req.params.id);
     if (!user) {
-      return res.status(404).json({ msg: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
     // Update user fields
-    user.NAME = name || user.NAME;
-    user.EMAIL = email || user.EMAIL;
-    user.PASSWORD = password || user.PASSWORD;
-    user.HOME = {
-      address: address || user.HOME.address,
-      lat: lat || user.HOME.lat,
-      lan: lan || user.HOME.lan,
-    };
+    if (name) user.NAME = name;
+    if (email) user.EMAIL = email;
+    if (password) user.PASSWORD = password;
+    if (address || lat || lan) {
+      user.HOME = {
+        address: address || user.HOME.address,
+        lat: lat || user.HOME.lat,
+        lan: lan || user.HOME.lan,
+      };
+    }
 
     await user.save();
 
@@ -46,8 +51,12 @@ router.put("/updateuser/:id", auth, async (req, res) => {
       message: "User updated successfully",
     });
   } catch (err) {
+    console.log("error occured in update user");
+    console.log(err);
     console.error(err.message);
-    res.status(500).send("Server error upadte");
+    res.status(500).json({
+      message: "Error occured at server side",
+    });
   }
 });
 
@@ -67,6 +76,71 @@ router.delete("/deleteuser/:id", auth, async (req, res) => {
 
     res.status(200).json({
       message: "User deleted successfully",
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+// GET FAVORITE LOCATION
+router.get("/favorite/:id", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+    if (req.params.id !== req.user._id) {
+      return res.status(403).json({ msg: "Unauthorized to view this user" });
+    }
+    res.status(200).json({
+      favorite: user.FAVORITE,
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+// GET HOME LOCATION
+router.get("/home/:id", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+    if (req.params.id !== req.user._id) {
+      return res.status(403).json({ msg: "Unauthorized to view this user" });
+    }
+    res.status(200).json({
+      home: user.HOME,
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+// ADD FAVORITE LOCATION
+
+router.post("/favorite/:id", auth, async (req, res) => {
+  const { address, lat, lan } = req.body;
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+    if (req.params.id !== req.user._id) {
+      return res.status(403).json({ msg: "Unauthorized to update this user" });
+    }
+    user.FAVORITE = {
+      address,
+      lat,
+      lan,
+    };
+    await user.save();
+    res.status(201).json({
+      message: "Favorite location added successfully",
     });
   } catch (err) {
     console.error(err.message);
