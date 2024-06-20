@@ -29,7 +29,8 @@ router.get("/", async (req, res) => {
     res.json(JugendberufshilfenWithType);
   } catch (err) {
     // Handle errors
-    res.status(500).send(err);
+    res.status(500).json({ message: "Server error" });
+    // res.status(500).send(err);
   }
 });
 export default router;

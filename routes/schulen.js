@@ -23,7 +23,8 @@ router.get("/", async (req, res) => {
     res.json(schulensWithType);
   } catch (err) {
     // Handle errors
-    res.status(500).send(err);
+    // res.status(500).send(err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 export default router;

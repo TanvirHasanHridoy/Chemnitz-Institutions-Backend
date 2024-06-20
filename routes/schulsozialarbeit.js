@@ -22,10 +22,11 @@ router.get("/", async (req, res) => {
       }
     );
     // Send the modified data as response
-    res.json(schulsozialarbeitWithType);
+    res.status(200).json(schulsozialarbeitWithType);
   } catch (err) {
     // Handle errors
-    res.status(500).send(err);
+    // res.status(500).send(err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 export default router;
